@@ -1,40 +1,62 @@
+import { ZoomAnimationSettings } from '../types'
+
 /**
- * Creates a spring-based easing function.
- * This simulates a damped harmonic oscillator, providing a more natural motion.
- * Inspired by principles from physics-based UI animation.
+ * Calculates the position of a spring animation at a given time using physics-based easing.
+ * Implements a damped harmonic oscillator model that can be underdamped, critically damped, or overdamped.
  *
- * @param tension - The stiffness of the spring. Higher values result in faster, snappier motion.
- * @param friction - The damping force. Higher values reduce oscillation and bring the spring to rest faster.
- * @param mass - The mass of the object. Higher values increase inertia and overshoot.
- * @returns An easing function that maps time `t` [0, 1] to a springy position value.
+ * @param {number} t - The normalized time value between 0 (start) and 1 (end).
+ * @param {number} from - The starting value of the animation.
+ * @param {number} to - The target value of the animation.
+ * @param {SpringConfig} config - Configuration object containing spring physics parameters:
+ *   - mass: The mass of the spring (affects inertia)
+ *   - tension: The spring tension/stiffness (higher = stiffer spring)
+ *   - friction: The damping/friction coefficient (higher = more damping)
+ *   - transitionDuration: Total duration of the animation in seconds
+ * @returns {number} The interpolated value between `from` and `to` at time `t`
  */
-export function createSpringEasing({ tension = 250, friction = 25, mass = 1 } = {}) {
-  // Pre-calculate physics constants for performance
-  const stiffness = tension
-  const damping = friction
-  const velocity = 0 // Start from rest
+export function simulateSpring(t: number, from: number, to: number, config: ZoomAnimationSettings): number {
+  const { mass, tension, friction, transitionDuration } = config
+  // The provided formula logic expects duration in milliseconds for its internal calculation.
+  const durationMs = transitionDuration * 1000
+  const displacement = to - from
 
-  return (t: number): number => {
-    if (t === 0) return 0
-    if (t === 1) return 1
+  // Calculate spring coefficients
+  const w0 = Math.sqrt(tension / mass)
+  const zeta = friction / (2 * Math.sqrt(tension * mass))
 
-    const m_w0 = Math.sqrt(stiffness / mass)
-    const m_zeta = damping / (2 * Math.sqrt(stiffness * mass))
+  // Clamp t to the [0, 1] range
+  t = Math.max(0, Math.min(1, t))
+  if (t === 1) return to // Ensure it ends exactly at the target value
 
-    if (m_zeta < 1) {
-      // Under-damped (bouncy)
-      const m_wd = m_w0 * Math.sqrt(1 - m_zeta * m_zeta)
-      const b = (m_zeta * m_w0 + -velocity) / m_wd
-      return (
-        1 - Math.exp(-t * m_zeta * m_w0) * ((1 + b * Math.sin(m_wd * t)) * Math.cos(m_wd * t) + Math.sin(m_wd * t) * -1)
-      )
-    } else {
-      // Critically damped (no bounce)
-      const g = m_w0
-      const h = velocity + m_w0
-      return 1 - (Math.exp(-t * g) * (1 + h * t)) / Math.exp(0)
-    }
+  if (zeta < 1) {
+    // Underdamped (oscillates)
+    const wd = w0 * Math.sqrt(1 - zeta * zeta)
+    const A = 1
+    const B = (zeta * w0) / wd
+    const envelope = Math.exp((-zeta * w0 * t * durationMs) / 1000)
+    const phase = (wd * t * durationMs) / 1000
+    return from + displacement * (1 - envelope * (A * Math.cos(phase) + B * Math.sin(phase)))
+  } else if (zeta === 1) {
+    // Critically damped
+    const scaledTime = (w0 * t * durationMs) / 1000
+    return from + displacement * (1 - (1 + scaledTime) * Math.exp(-scaledTime))
+  } else {
+    // Overdamped
+    const r1 = -w0 * (zeta - Math.sqrt(zeta * zeta - 1))
+    const r2 = -w0 * (zeta + Math.sqrt(zeta * zeta - 1))
+    const A = r2 / (r2 - r1)
+    const B = 1 - A
+    const scaledTime = (t * durationMs) / 1000
+    return from + displacement * (1 - A * Math.exp(r1 * scaledTime) - B * Math.exp(r2 * scaledTime))
   }
+}
+
+export const createSpringEasing = (
+  from: number,
+  to: number,
+  config: ZoomAnimationSettings,
+): ((t: number) => number) => {
+  return (t: number) => simulateSpring(t, from, to, config)
 }
 
 // --- Standard Cubic Bezier Easing Functions ---

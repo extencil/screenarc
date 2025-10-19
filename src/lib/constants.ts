@@ -47,9 +47,8 @@ export const ZOOM = {
     Quick: 0.7,
     Rapid: 0.4,
   },
-  DEFAULT_LEVEL: 1.5, // Default zoom level when adding a new region
+  DEFAULT_LEVEL: 2, // Default zoom level when adding a new region
   DEFAULT_DURATION: 3.0, // Default duration when adding a new region
-  DEFAULT_EASING: 'balanced',
 
   // --- Auto-Zoom Generation ---
   AUTO_ZOOM_PRE_CLICK_OFFSET: 1.0, // Time to start zoom before the first click
@@ -109,7 +108,6 @@ export const DEFAULTS = {
   },
   ANIMATION: {
     SPEED: { defaultValue: ZOOM.DEFAULT_SPEED },
-    EASING: { defaultValue: ZOOM.DEFAULT_EASING },
     ZOOM_LEVEL: { min: 1, max: 3, step: 0.1, defaultValue: ZOOM.DEFAULT_LEVEL },
   },
   CURSOR: {

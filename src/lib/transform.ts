@@ -1,4 +1,4 @@
-import { createSpringEasing } from './anim'
+import { simulateSpring } from './anim' // CHANGED: Import simulateSpring instead of createSpringEasing
 import { ZoomRegion, MetaDataItem, ZoomAnimationSettings } from '../types'
 
 // --- HELPER FUNCTIONS ---
@@ -171,27 +171,29 @@ export const calculateZoomTransform = (
     finalPan = calculateBoundedPan(finalMousePos, fixedOrigin, zoomLevel, recordingGeometry, frameContentDimensions)
   }
 
-  const easingFn = createSpringEasing(zoomAnimation)
+  // CHANGED: Removed the old easingFn. We will use simulateSpring directly.
 
   // --- Determine current transform based on phase ---
 
   // Phase 1: ZOOM-IN
   if (currentTime >= startTime && currentTime < zoomInEndTime) {
-    const t = easingFn((currentTime - startTime) / transitionDuration)
-    currentScale = lerp(1, zoomLevel, t)
+    // CHANGED: Use simulateSpring instead of lerp + easingFn
+    const t = (currentTime - startTime) / transitionDuration
+    currentScale = simulateSpring(t, 1, zoomLevel, zoomAnimation)
     // Panning is disabled during zoom-in for stability
   }
   // Phase 2: PAN/HOLD (Fully zoomed in, pan follows smoothed mouse)
   else if (currentTime >= zoomInEndTime && currentTime < zoomOutStartTime) {
     currentScale = zoomLevel
-    currentTranslateX = livePan.tx
-    currentTranslateY = livePan.ty
+    // currentTranslateX = livePan.tx
+    // currentTranslateY = livePan.ty
   }
   // Phase 3: ZOOM-OUT
   else if (currentTime >= zoomOutStartTime && currentTime <= startTime + duration) {
-    const t = easingFn((currentTime - zoomOutStartTime) / transitionDuration)
-    currentScale = lerp(zoomLevel, 1, t)
-    currentTranslateX = lerp(finalPan.tx, 0, t)
+    // CHANGED: Use simulateSpring for scale and a simple lerp for pan
+    const t = (currentTime - zoomOutStartTime) / transitionDuration
+    currentScale = simulateSpring(t, zoomLevel, 1, zoomAnimation)
+    currentTranslateX = lerp(finalPan.tx, 0, t) // Pan can use a simpler easing for stability
     currentTranslateY = lerp(finalPan.ty, 0, t)
   }
 

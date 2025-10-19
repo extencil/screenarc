@@ -1,6 +1,6 @@
 import { EditorState, RenderableState, WebcamPosition } from '../types'
 import { calculateZoomTransform, findLastMetadataIndex } from './transform'
-import { createSpringEasing, EASING_PRESETS } from './anim'
+import { simulateSpring, EASING_PRESETS } from './anim'
 import { DEFAULTS } from './constants'
 
 type Rect = { x: number; y: number; width: number; height: number }
@@ -365,14 +365,14 @@ export const drawScene = async (
         const { transitionDuration } = state.zoomAnimation
         const zoomInEndTime = startTime + transitionDuration
         const zoomOutStartTime = startTime + duration - transitionDuration
-        const easingFn = createSpringEasing(state.zoomAnimation)
 
         if (currentTime < zoomInEndTime) {
           const progress = (currentTime - startTime) / transitionDuration
-          finalWebcamScale = lerp(1, DEFAULTS.CAMERA.SCALE_ON_ZOOM_AMOUNT, easingFn(progress))
+          // finalWebcamScale = lerp(1, DEFAULTS.CAMERA.SCALE_ON_ZOOM_AMOUNT, easingFn(progress))
+          finalWebcamScale = simulateSpring(progress, 1, DEFAULTS.CAMERA.SCALE_ON_ZOOM_AMOUNT, state.zoomAnimation)
         } else if (currentTime >= zoomOutStartTime) {
           const progress = (currentTime - zoomOutStartTime) / transitionDuration
-          finalWebcamScale = lerp(DEFAULTS.CAMERA.SCALE_ON_ZOOM_AMOUNT, 1, easingFn(progress))
+          finalWebcamScale = simulateSpring(progress, DEFAULTS.CAMERA.SCALE_ON_ZOOM_AMOUNT, 1, state.zoomAnimation)
         } else {
           finalWebcamScale = DEFAULTS.CAMERA.SCALE_ON_ZOOM_AMOUNT
         }
