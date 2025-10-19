@@ -1,6 +1,6 @@
 import { EditorState, RenderableState, WebcamPosition } from '../types'
 import { calculateZoomTransform, findLastMetadataIndex } from './transform'
-import { EASING_MAP } from './easing'
+import { createSpringEasing, EASING_PRESETS } from './anim'
 import { DEFAULTS } from './constants'
 
 type Rect = { x: number; y: number; width: number; height: number }
@@ -208,6 +208,7 @@ export const drawScene = async (
     state.metadata,
     state.recordingGeometry || state.videoDimensions,
     { width: frameContentWidth, height: frameContentHeight },
+    state.zoomAnimation,
   )
 
   const [originXStr, originYStr] = transformOrigin.split(' ')
@@ -256,7 +257,7 @@ export const drawScene = async (
   // --- 4. Draw Click Animations ---
   if (state.cursorStyles.clickRippleEffect && state.recordingGeometry) {
     const { clickRippleDuration, clickRippleSize, clickRippleColor } = state.cursorStyles
-    const rippleEasing = EASING_MAP.Balanced // Ripple uses a standard ease-out
+    const rippleEasing = EASING_PRESETS.balanced.easing // Ripple uses a standard ease-out
 
     const recentRippleClicks = state.metadata.filter(
       (event) =>
@@ -320,7 +321,8 @@ export const drawScene = async (
 
           if (mostRecentClick) {
             const progress = (currentTime - mostRecentClick.timestamp) / clickScaleDuration
-            const easingFn = EASING_MAP[clickScaleEasing as keyof typeof EASING_MAP] || EASING_MAP.Balanced
+            const easingFn =
+              EASING_PRESETS[clickScaleEasing as keyof typeof EASING_PRESETS]?.easing || EASING_PRESETS.balanced.easing
             const easedProgress = easingFn(progress)
             const scaleValue = 1 - (1 - clickScaleAmount) * Math.sin(easedProgress * Math.PI)
             cursorScale = scaleValue
@@ -359,10 +361,11 @@ export const drawScene = async (
         (r) => currentTime >= r.startTime && currentTime < r.startTime + r.duration,
       )
       if (activeZoomRegion) {
-        const { startTime, duration, transitionDuration } = activeZoomRegion
+        const { startTime, duration } = activeZoomRegion
+        const { transitionDuration } = state.zoomAnimation
         const zoomInEndTime = startTime + transitionDuration
         const zoomOutStartTime = startTime + duration - transitionDuration
-        const easingFn = EASING_MAP[activeZoomRegion.easing as keyof typeof EASING_MAP] || EASING_MAP.Balanced
+        const easingFn = createSpringEasing(state.zoomAnimation)
 
         if (currentTime < zoomInEndTime) {
           const progress = (currentTime - startTime) / transitionDuration
@@ -446,7 +449,9 @@ export const drawScene = async (
       progress = (currentTime - timeOfChange) / transitionDuration
     }
 
-    const easingFn = EASING_MAP[DEFAULTS.CAMERA.SMART_POSITION.EASING as keyof typeof EASING_MAP] || EASING_MAP.Balanced
+    const easingFn =
+      EASING_PRESETS[DEFAULTS.CAMERA.SMART_POSITION.EASING as keyof typeof EASING_PRESETS]?.easing ||
+      EASING_PRESETS.balanced.easing
     const easedProgress = easingFn(Math.min(1, progress))
 
     const startRect = getWebcamRectForPosition(

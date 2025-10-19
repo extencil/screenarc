@@ -8,7 +8,7 @@
  * @param mass - The mass of the object. Higher values increase inertia and overshoot.
  * @returns An easing function that maps time `t` [0, 1] to a springy position value.
  */
-function createSpringEasing({ tension = 250, friction = 25, mass = 1 } = {}) {
+export function createSpringEasing({ tension = 250, friction = 25, mass = 1 } = {}) {
   // Pre-calculate physics constants for performance
   const stiffness = tension
   const damping = friction
@@ -56,17 +56,27 @@ const easeOutQuint = (t: number): number => {
   return 1 - Math.pow(1 - t, 5)
 }
 
-// --- User-Friendly Easing Map ---
-// This map provides descriptive names for different animation styles,
-// making the UI more intuitive for non-technical users.
+// --- User-Friendly Animation Preset Maps ---
 
-export const EASING_MAP = {
-  // Standard, reliable easing curves
-  Smooth: easeOutQuint, // A gentle start that decelerates smoothly to a stop. Good for elegant transitions.
-  Balanced: easeInOutQuint, // A symmetrical, very smooth acceleration and deceleration. The new default.
-  Dynamic: easeInOutCubic, // A slightly quicker and more pronounced acceleration/deceleration than Balanced.
-
-  // Physics-based spring animations
-  'Gentle Spring': createSpringEasing({ tension: 180, friction: 30, mass: 1 }), // A soft, fluid motion with no bounce.
-  'Bouncy Spring': createSpringEasing({ tension: 380, friction: 20, mass: 1 }), // A playful, energetic motion with a noticeable overshoot and bounce.
+/**
+ * Standard, curve-based easing functions for simple, predictable animations.
+ * Used for UI effects like click ripples and cursor scaling.
+ */
+export const EASING_PRESETS: Record<string, { name: string; easing: (t: number) => number }> = {
+  smooth: { name: 'Smooth', easing: easeOutQuint },
+  balanced: { name: 'Balanced', easing: easeInOutQuint },
+  dynamic: { name: 'Dynamic', easing: easeInOutCubic },
 }
+
+/**
+ * Physics parameters for spring animations, used for natural, interruptible motion.
+ * Used for camera movements (zoom/pan) and cursor tracking.
+ */
+export const SPRING_PHYSICS_PRESETS: Record<string, { name: string; mass: number; tension: number; friction: number }> =
+  {
+    default: { name: 'Default', mass: 1, tension: 170, friction: 26 },
+    gentle: { name: 'Gentle', mass: 1, tension: 120, friction: 14 },
+    wobbly: { name: 'Wobbly', mass: 1, tension: 180, friction: 12 },
+    stiff: { name: 'Stiff', mass: 1, tension: 210, friction: 20 },
+    slow: { name: 'Slow', mass: 1, tension: 280, friction: 60 },
+  }

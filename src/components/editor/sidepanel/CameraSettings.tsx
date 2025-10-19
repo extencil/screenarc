@@ -3,7 +3,8 @@ import { useMemo } from 'react'
 import { useEditorStore } from '../../../store/editorStore'
 import { ControlGroup } from './ControlGroup'
 import {
-  DeviceComputerCamera,
+  Video,
+  VideoOff,
   Eye,
   Photo,
   Circle,
@@ -12,7 +13,6 @@ import {
   Wand,
   BorderRadius,
   SquareToggle,
-  DeviceComputerCameraOff,
   ZoomIn,
   ArrowsUpRight,
 } from 'tabler-icons-react'
@@ -132,7 +132,7 @@ export function CameraSettings() {
       <div className="p-6 border-b border-sidebar-border flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-            <DeviceComputerCamera className="w-5 h-5 text-primary" />
+            <Video className="w-5 h-5 text-primary" />
           </div>
           <div>
             <h2 className="text-lg font-semibold text-sidebar-foreground">Camera Settings</h2>
@@ -145,7 +145,7 @@ export function CameraSettings() {
       <div className="flex-1 overflow-y-auto stable-scrollbar">
         {!webcamVideoUrl ? (
           <DisabledPanelPlaceholder
-            icon={<DeviceComputerCameraOff className="w-8 h-8 text-muted-foreground" />}
+            icon={<VideoOff className="w-8 h-8 text-muted-foreground" />}
             title="No Webcam Recorded"
             message="These settings are unavailable because a webcam was not included in this recording."
           />

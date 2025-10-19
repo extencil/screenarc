@@ -59,8 +59,6 @@ export interface ZoomRegion {
   startTime: number
   duration: number
   zoomLevel: number
-  easing: string // Changed from 'linear' | 'ease-in-out'
-  transitionDuration: number // New property for speed
   targetX: number
   targetY: number
   mode: 'auto' | 'fixed'
@@ -227,7 +225,7 @@ export interface TimelineActions {
   setSelectedRegionId: (id: string | null) => void
   setPreviewCutRegion: (region: CutRegion | null) => void
   setTimelineZoom: (zoom: number) => void
-  applyAnimationSettingsToAll: (settings: { transitionDuration: number; easing: string; zoomLevel: number }) => void
+  applyAnimationSettingsToAll: (settings: { zoomLevel: number }) => void
   applySpeedToAll: (speed: number) => void
 }
 
@@ -288,6 +286,37 @@ export interface AudioActions {
   setIsMuted: (isMuted: boolean) => void
 }
 
+export interface MotionBlurSettings {
+  enabled: boolean
+  amount: number
+  cursor: number
+  zoom: number
+  pan: number
+}
+
+export interface SpringAnimationSettings {
+  style: string // preset name e.g., 'default', 'gentle'
+  mass: number
+  tension: number
+  friction: number
+}
+
+export interface ZoomAnimationSettings extends SpringAnimationSettings {
+  transitionDuration: number
+}
+
+export interface AnimationState {
+  motionBlur: MotionBlurSettings
+  cursorAnimation: SpringAnimationSettings // movement
+  zoomAnimation: ZoomAnimationSettings // screen zoom
+}
+
+export interface AnimationActions {
+  updateMotionBlur: (settings: Partial<MotionBlurSettings>) => void
+  updateCursorAnimation: (settings: Partial<SpringAnimationSettings>) => void
+  updateZoomAnimation: (settings: Partial<ZoomAnimationSettings>) => void
+}
+
 export type RenderableState = Pick<
   EditorState,
   | 'platform'
@@ -307,6 +336,8 @@ export type RenderableState = Pick<
   | 'syncOffset'
   | 'cursorTheme'
   | 'cursorStyles'
+  | 'zoomAnimation'
+  | 'cursorAnimation'
 >
 
 // Combined state type for the editor store
@@ -317,7 +348,8 @@ export type EditorState = ProjectState &
   PresetState &
   WebcamState &
   UIState &
-  AudioState
+  AudioState &
+  AnimationState
 
 // Combined actions type for the editor store
 export type EditorActions = ProjectActions &
@@ -327,7 +359,8 @@ export type EditorActions = ProjectActions &
   PresetActions &
   WebcamActions &
   UIActions &
-  AudioActions & {
+  AudioActions &
+  AnimationActions & {
     // Global reset action
     reset: () => void
   }

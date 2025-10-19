@@ -49,13 +49,13 @@ export const ZOOM = {
   },
   DEFAULT_LEVEL: 1.5, // Default zoom level when adding a new region
   DEFAULT_DURATION: 3.0, // Default duration when adding a new region
-  DEFAULT_EASING: 'Balanced',
+  DEFAULT_EASING: 'balanced',
 
   // --- Auto-Zoom Generation ---
   AUTO_ZOOM_PRE_CLICK_OFFSET: 1.0, // Time to start zoom before the first click
   AUTO_ZOOM_POST_CLICK_PADDING: 0.9, // Time to hold zoom after the last click
   AUTO_ZOOM_MIN_DURATION: 3.0, // Minimum duration for an auto-generated zoom region
-  PAN_EASING: 'Balanced', // Easing function for pan transitions
+  PAN_EASING: 'balanced', // Easing function for pan transitions
 }
 
 // --- Editor Defaults ---
@@ -99,7 +99,7 @@ export const DEFAULTS = {
       ENABLED: { defaultValue: true },
       LOOKAHEAD_TIME: 0.1, // seconds
       TRANSITION_DURATION: 0.5, // 300ms for a smooth transition
-      EASING: 'Balanced',
+      EASING: 'balanced',
     },
     SCALE_ON_ZOOM_AMOUNT: 0.8,
   },
@@ -133,7 +133,7 @@ export const DEFAULTS = {
       ENABLED: { defaultValue: true },
       AMOUNT: { min: 0.5, max: 1.5, step: 0.05, defaultValue: 0.8 },
       DURATION: { min: 0.1, max: 1, step: 0.05, defaultValue: 0.4 },
-      EASING: { defaultValue: 'Balanced' },
+      EASING: { defaultValue: 'balanced' },
     },
   },
 }

@@ -45,6 +45,8 @@ export const Preview = memo(
       setCurrentTime,
       cursorStyles,
       cursorBitmapsToRender,
+      selectedRegionId,
+      zoomRegions,
     } = useEditorStore(
       useShallow((state) => ({
         videoUrl: state.videoUrl,
@@ -67,6 +69,8 @@ export const Preview = memo(
         setCurrentTime: state.setCurrentTime,
         cursorStyles: state.cursorStyles,
         cursorBitmapsToRender: state.cursorBitmapsToRender,
+        selectedRegionId: state.selectedRegionId,
+        zoomRegions: state.zoomRegions,
       })),
     )
 
@@ -251,6 +255,17 @@ export const Preview = memo(
     const handleTimeUpdate = () => {
       if (!videoRef.current) return
       const video = videoRef.current
+
+      // Loop playback for selected zoom region
+      if (isPlaying && selectedRegionId && zoomRegions[selectedRegionId]) {
+        const region = zoomRegions[selectedRegionId]
+        const loopEnd = region.startTime + region.duration
+        // Use a small buffer to prevent floating point issues with timeupdate frequency
+        if (video.currentTime >= loopEnd - 0.05) {
+          video.currentTime = region.startTime
+        }
+      }
+
       const newTime = video.currentTime
 
       // Handle speed regions
