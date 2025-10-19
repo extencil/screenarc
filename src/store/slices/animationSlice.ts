@@ -1,11 +1,4 @@
-import type {
-  AnimationState,
-  AnimationActions,
-  Slice,
-  MotionBlurSettings,
-  SpringAnimationSettings,
-  ZoomAnimationSettings,
-} from '../../types'
+import type { AnimationState, AnimationActions, Slice, MotionBlurSettings, ZoomAnimationSettings } from '../../types'
 import { ZOOM } from '../../lib/constants'
 import { SPRING_PHYSICS_PRESETS } from '../../lib/anim'
 
@@ -20,6 +13,7 @@ export const initialAnimationState: AnimationState = {
   cursorAnimation: {
     style: 'default',
     ...SPRING_PHYSICS_PRESETS.default,
+    transitionDuration: 0.5, // Default duration for cursor springiness
   },
   zoomAnimation: {
     style: 'default',
@@ -34,7 +28,7 @@ export const createAnimationSlice: Slice<AnimationState, AnimationActions> = (se
     set((state) => {
       Object.assign(state.motionBlur, settings)
     }),
-  updateCursorAnimation: (settings: Partial<SpringAnimationSettings>) =>
+  updateCursorAnimation: (settings: Partial<ZoomAnimationSettings>) =>
     set((state) => {
       // If a preset style is being set, apply its physics values
       if (settings.style && SPRING_PHYSICS_PRESETS[settings.style]) {
@@ -45,7 +39,10 @@ export const createAnimationSlice: Slice<AnimationState, AnimationActions> = (se
       Object.assign(state.cursorAnimation, settings)
       // If individual properties are changed, mark style as 'custom'
       if (
-        (settings.mass !== undefined || settings.tension !== undefined || settings.friction !== undefined) &&
+        (settings.mass !== undefined ||
+          settings.tension !== undefined ||
+          settings.friction !== undefined ||
+          settings.transitionDuration !== undefined) &&
         settings.style === undefined
       ) {
         state.cursorAnimation.style = 'custom'

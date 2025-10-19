@@ -21,6 +21,9 @@ export function AnimationSettingsPanel() {
       })),
     )
 
+  const isCursorStyleCustom = cursorAnimation.style === 'custom'
+  const isZoomStyleCustom = zoomAnimation.style === 'custom'
+
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
@@ -131,6 +134,11 @@ export function AnimationSettingsPanel() {
                 <SelectValue placeholder="Select a preset" />
               </SelectTrigger>
               <SelectContent>
+                {isCursorStyleCustom && (
+                  <SelectItem value="custom" disabled>
+                    Custom
+                  </SelectItem>
+                )}
                 {Object.entries(SPRING_PHYSICS_PRESETS).map(([key, { name }]) => (
                   <SelectItem key={key} value={key}>
                     {name}
@@ -201,6 +209,11 @@ export function AnimationSettingsPanel() {
                 <SelectValue placeholder="Select a preset" />
               </SelectTrigger>
               <SelectContent>
+                {isZoomStyleCustom && (
+                  <SelectItem value="custom" disabled>
+                    Custom
+                  </SelectItem>
+                )}
                 {Object.entries(SPRING_PHYSICS_PRESETS).map(([key, { name }]) => (
                   <SelectItem key={key} value={key}>
                     {name}
