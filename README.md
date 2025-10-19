@@ -1,4 +1,4 @@
-# ScreenArc 🎬
+# [WIP] ScreenArc 🎬
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/tamnguyenvan/screenarc/main/docs/assets/small-banner.png" alt="ScreenArc Banner">
@@ -20,7 +20,7 @@ Perfect for developers, educators, and content creators who want to produce stun
 
 ## 🎥 Demo
 
-![ScreenArc Demo](https://raw.githubusercontent.com/tamnguyenvan/screenarc/main/docs/assets/screenarc-demo.mp4)
+<video src="https://raw.githubusercontent.com/tamnguyenvan/screenarc/main/docs/assets/screenarc-demo.mp4" autoplay loop muted playsinline></video>
 
 ---
 
