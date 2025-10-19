@@ -59,8 +59,6 @@ export interface ZoomRegion {
   startTime: number
   duration: number
   zoomLevel: number
-  easing: string // Changed from 'linear' | 'ease-in-out'
-  transitionDuration: number // New property for speed
   targetX: number
   targetY: number
   mode: 'auto' | 'fixed'
@@ -123,14 +121,14 @@ export interface CursorImageBitmap extends CursorImageBase {
 
 export interface WebcamPosition {
   pos:
-  | 'top-left'
-  | 'top-center'
-  | 'top-right'
-  | 'bottom-left'
-  | 'bottom-center'
-  | 'bottom-right'
-  | 'left-center'
-  | 'right-center'
+    | 'top-left'
+    | 'top-center'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-center'
+    | 'bottom-right'
+    | 'left-center'
+    | 'right-center'
 }
 
 export type WebcamShape = 'circle' | 'square' | 'rectangle'
@@ -227,7 +225,7 @@ export interface TimelineActions {
   setSelectedRegionId: (id: string | null) => void
   setPreviewCutRegion: (region: CutRegion | null) => void
   setTimelineZoom: (zoom: number) => void
-  applyAnimationSettingsToAll: (settings: { transitionDuration: number; easing: string; zoomLevel: number }) => void
+  applyAnimationSettingsToAll: (settings: { zoomLevel: number }) => void
   applySpeedToAll: (speed: number) => void
 }
 
@@ -296,23 +294,27 @@ export interface MotionBlurSettings {
   pan: number
 }
 
-export interface AnimationStyle {
+export interface SpringAnimationSettings {
   style: string // preset name e.g., 'default', 'gentle'
   mass: number
   tension: number
   friction: number
 }
 
+export interface ZoomAnimationSettings extends SpringAnimationSettings {
+  transitionDuration: number
+}
+
 export interface AnimationState {
   motionBlur: MotionBlurSettings
-  cursorAnimation: AnimationStyle
-  zoomAnimation: AnimationStyle
+  cursorAnimation: SpringAnimationSettings // movement
+  zoomAnimation: ZoomAnimationSettings // screen zoom
 }
 
 export interface AnimationActions {
   updateMotionBlur: (settings: Partial<MotionBlurSettings>) => void
-  updateCursorAnimation: (settings: Partial<AnimationStyle>) => void
-  updateZoomAnimation: (settings: Partial<AnimationStyle>) => void
+  updateCursorAnimation: (settings: Partial<SpringAnimationSettings>) => void
+  updateZoomAnimation: (settings: Partial<ZoomAnimationSettings>) => void
 }
 
 export type RenderableState = Pick<
@@ -334,6 +336,8 @@ export type RenderableState = Pick<
   | 'syncOffset'
   | 'cursorTheme'
   | 'cursorStyles'
+  | 'zoomAnimation'
+  | 'cursorAnimation'
 >
 
 // Combined state type for the editor store

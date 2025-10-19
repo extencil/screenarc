@@ -1,6 +1,6 @@
 import { useEditorStore } from '../../store/editorStore'
 import { RegionSettingsPanel } from './RegionSettingsPanel'
-import { Microphone, DeviceComputerCamera, LayoutBoard, Route, Pointer } from 'tabler-icons-react'
+import { LayoutBoard, Route, Pointer, Video, Volume2 } from 'tabler-icons-react'
 import { BackgroundSettings } from './sidepanel/BackgroundSettings'
 import { FrameEffectsSettings } from './sidepanel/FrameEffectsSettings'
 import { CameraSettings } from './sidepanel/CameraSettings'
@@ -160,15 +160,21 @@ export function SidePanel() {
             onClick={() => setActiveSidePanelTab('general')}
           />
           <TabButton
+            label="Cursor"
+            icon={<Pointer className="w-5 h-5" />}
+            isActive={activeSidePanelTab === 'cursor'}
+            onClick={() => setActiveSidePanelTab('cursor')}
+          />
+          <TabButton
             label="Camera"
-            icon={<DeviceComputerCamera className="w-5 h-5" />}
+            icon={<Video className="w-5 h-5" />}
             isActive={activeSidePanelTab === 'camera'}
             onClick={() => setActiveSidePanelTab('camera')}
             disabled={!webcamVideoUrl}
           />
           <TabButton
             label="Audio"
-            icon={<Microphone className="w-5 h-5" />}
+            icon={<Volume2 className="w-5 h-5" />}
             isActive={activeSidePanelTab === 'audio'}
             onClick={() => setActiveSidePanelTab('audio')}
             disabled={!hasAudioTrack}
@@ -178,12 +184,6 @@ export function SidePanel() {
             icon={<Route className="w-5 h-5" />}
             isActive={activeSidePanelTab === 'animation'}
             onClick={() => setActiveSidePanelTab('animation')}
-          />
-          <TabButton
-            label="Cursor"
-            icon={<Pointer className="w-5 h-5" />}
-            isActive={activeSidePanelTab === 'cursor'}
-            onClick={() => setActiveSidePanelTab('cursor')}
           />
         </div>
       </div>

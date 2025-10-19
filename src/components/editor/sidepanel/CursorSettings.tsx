@@ -10,7 +10,7 @@ import { Slider } from '../../ui/slider'
 import { ColorPicker } from '../../ui/color-picker'
 import { rgbaToHexAlpha, hexToRgb } from '../../../lib/utils'
 import { DEFAULTS } from '../../../lib/constants'
-import { EASING_MAP } from '../../../lib/easing'
+import { EASING_PRESETS } from '../../../lib/anim'
 import { Switch } from '../../ui/switch'
 import { ControlGroup } from './ControlGroup'
 
@@ -21,7 +21,7 @@ const POST_PROCESSING_SCALES = [
   { value: 1, label: '1x' },
 ]
 
-const easingOptions = Object.keys(EASING_MAP)
+const easingOptions = Object.keys(EASING_PRESETS)
 
 export function CursorSettings() {
   const {
@@ -399,9 +399,9 @@ export function CursorSettings() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        {easingOptions.map((easing) => (
-                          <SelectItem key={easing} value={easing}>
-                            {easing}
+                        {easingOptions.map((easingKey) => (
+                          <SelectItem key={easingKey} value={easingKey}>
+                            {EASING_PRESETS[easingKey as keyof typeof EASING_PRESETS].name}
                           </SelectItem>
                         ))}
                       </SelectContent>

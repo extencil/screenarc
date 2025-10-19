@@ -1,5 +1,5 @@
-import { EASING_MAP } from './easing'
-import { ZoomRegion, MetaDataItem } from '../types'
+import { createSpringEasing } from './anim'
+import { ZoomRegion, MetaDataItem, ZoomAnimationSettings } from '../types'
 
 // --- HELPER FUNCTIONS ---
 
@@ -130,6 +130,7 @@ export const calculateZoomTransform = (
   metadata: MetaDataItem[],
   recordingGeometry: { width: number; height: number },
   frameContentDimensions: { width: number; height: number },
+  zoomAnimation: ZoomAnimationSettings,
 ): { scale: number; translateX: number; translateY: number; transformOrigin: string } => {
   const activeRegion = Object.values(zoomRegions).find(
     (r) => currentTime >= r.startTime && currentTime < r.startTime + r.duration,
@@ -144,7 +145,8 @@ export const calculateZoomTransform = (
 
   if (!activeRegion) return defaultTransform
 
-  const { startTime, duration, zoomLevel, targetX, targetY, mode, easing, transitionDuration } = activeRegion
+  const { startTime, duration, zoomLevel, targetX, targetY, mode } = activeRegion
+  const { transitionDuration } = zoomAnimation
   const zoomOutStartTime = startTime + duration - transitionDuration
   const zoomInEndTime = startTime + transitionDuration
 
@@ -156,15 +158,10 @@ export const calculateZoomTransform = (
   let currentTranslateY = 0
 
   // --- Calculate Pan Targets ---
-  // let initialPan = { tx: 0, ty: 0 }
   let livePan = { tx: 0, ty: 0 }
   let finalPan = { tx: 0, ty: 0 }
 
   if (mode === 'auto' && metadata.length > 0 && recordingGeometry.width > 0) {
-    // Pan target for the end of the zoom-in transition (STATIONARY)
-    // const initialMousePos = getSmoothedMousePosition(metadata, zoomInEndTime)
-    // initialPan = calculateBoundedPan(initialMousePos, fixedOrigin, zoomLevel, recordingGeometry, frameContentDimensions)
-
     // Live pan target for the hold phase (DYNAMIC)
     const liveMousePos = getSmoothedMousePosition(metadata, currentTime)
     livePan = calculateBoundedPan(liveMousePos, fixedOrigin, zoomLevel, recordingGeometry, frameContentDimensions)
@@ -174,30 +171,25 @@ export const calculateZoomTransform = (
     finalPan = calculateBoundedPan(finalMousePos, fixedOrigin, zoomLevel, recordingGeometry, frameContentDimensions)
   }
 
+  const easingFn = createSpringEasing(zoomAnimation)
+
   // --- Determine current transform based on phase ---
 
-  // Phase 1: ZOOM-IN (No panning, just move towards initial pan position)
+  // Phase 1: ZOOM-IN
   if (currentTime >= startTime && currentTime < zoomInEndTime) {
-    console.log('is being zoom-in')
-    const t = (EASING_MAP[easing as keyof typeof EASING_MAP] || EASING_MAP.Balanced)(
-      (currentTime - startTime) / transitionDuration,
-    )
+    const t = easingFn((currentTime - startTime) / transitionDuration)
     currentScale = lerp(1, zoomLevel, t)
-    // currentTranslateX = lerp(0, initialPan.tx, t)
-    // currentTranslateY = lerp(0, initialPan.ty, t)
+    // Panning is disabled during zoom-in for stability
   }
   // Phase 2: PAN/HOLD (Fully zoomed in, pan follows smoothed mouse)
   else if (currentTime >= zoomInEndTime && currentTime < zoomOutStartTime) {
-    console.log('is being pan/hold')
     currentScale = zoomLevel
     currentTranslateX = livePan.tx
     currentTranslateY = livePan.ty
   }
-  // Phase 3: ZOOM-OUT (No panning, move from final pan position back to center)
+  // Phase 3: ZOOM-OUT
   else if (currentTime >= zoomOutStartTime && currentTime <= startTime + duration) {
-    const t = (EASING_MAP[easing as keyof typeof EASING_MAP] || EASING_MAP.Balanced)(
-      (currentTime - zoomOutStartTime) / transitionDuration,
-    )
+    const t = easingFn((currentTime - zoomOutStartTime) / transitionDuration)
     currentScale = lerp(zoomLevel, 1, t)
     currentTranslateX = lerp(finalPan.tx, 0, t)
     currentTranslateY = lerp(finalPan.ty, 0, t)

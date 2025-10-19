@@ -1,13 +1,13 @@
-import type { AnimationState, AnimationActions, Slice, AnimationStyle, MotionBlurSettings } from '../../types'
-
-export const ANIMATION_PRESETS: Record<string, Omit<AnimationStyle, 'style'>> = {
-  default: { mass: 1, tension: 170, friction: 26 },
-  gentle: { mass: 1, tension: 120, friction: 14 },
-  wobbly: { mass: 1, tension: 180, friction: 12 },
-  stiff: { mass: 1, tension: 210, friction: 20 },
-  slow: { mass: 1, tension: 280, friction: 60 },
-  custom: { mass: 1, tension: 170, friction: 26 }, // Placeholder for custom values
-}
+import type {
+  AnimationState,
+  AnimationActions,
+  Slice,
+  MotionBlurSettings,
+  SpringAnimationSettings,
+  ZoomAnimationSettings,
+} from '../../types'
+import { ZOOM } from '../../lib/constants'
+import { SPRING_PHYSICS_PRESETS } from '../../lib/anim'
 
 export const initialAnimationState: AnimationState = {
   motionBlur: {
@@ -19,11 +19,12 @@ export const initialAnimationState: AnimationState = {
   },
   cursorAnimation: {
     style: 'default',
-    ...ANIMATION_PRESETS.default,
+    ...SPRING_PHYSICS_PRESETS.default,
   },
   zoomAnimation: {
     style: 'default',
-    ...ANIMATION_PRESETS.default,
+    ...SPRING_PHYSICS_PRESETS.default,
+    transitionDuration: ZOOM.SPEED_OPTIONS[ZOOM.DEFAULT_SPEED as keyof typeof ZOOM.SPEED_OPTIONS],
   },
 }
 
@@ -33,11 +34,12 @@ export const createAnimationSlice: Slice<AnimationState, AnimationActions> = (se
     set((state) => {
       Object.assign(state.motionBlur, settings)
     }),
-  updateCursorAnimation: (settings: Partial<AnimationStyle>) =>
+  updateCursorAnimation: (settings: Partial<SpringAnimationSettings>) =>
     set((state) => {
-      // If a preset style is being set, apply its values
-      if (settings.style && ANIMATION_PRESETS[settings.style]) {
-        Object.assign(state.cursorAnimation, ANIMATION_PRESETS[settings.style])
+      // If a preset style is being set, apply its physics values
+      if (settings.style && SPRING_PHYSICS_PRESETS[settings.style]) {
+        const { mass, tension, friction } = SPRING_PHYSICS_PRESETS[settings.style]
+        Object.assign(state.cursorAnimation, { mass, tension, friction })
       }
       // Apply any other individual property overrides
       Object.assign(state.cursorAnimation, settings)
@@ -49,14 +51,18 @@ export const createAnimationSlice: Slice<AnimationState, AnimationActions> = (se
         state.cursorAnimation.style = 'custom'
       }
     }),
-  updateZoomAnimation: (settings: Partial<AnimationStyle>) =>
+  updateZoomAnimation: (settings: Partial<ZoomAnimationSettings>) =>
     set((state) => {
-      if (settings.style && ANIMATION_PRESETS[settings.style]) {
-        Object.assign(state.zoomAnimation, ANIMATION_PRESETS[settings.style])
+      if (settings.style && SPRING_PHYSICS_PRESETS[settings.style]) {
+        const { mass, tension, friction } = SPRING_PHYSICS_PRESETS[settings.style]
+        Object.assign(state.zoomAnimation, { mass, tension, friction })
       }
       Object.assign(state.zoomAnimation, settings)
       if (
-        (settings.mass !== undefined || settings.tension !== undefined || settings.friction !== undefined) &&
+        (settings.mass !== undefined ||
+          settings.tension !== undefined ||
+          settings.friction !== undefined ||
+          settings.transitionDuration !== undefined) &&
         settings.style === undefined
       ) {
         state.zoomAnimation.style = 'custom'

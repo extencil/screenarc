@@ -5,10 +5,8 @@ import { Switch } from '../../ui/switch'
 import { Slider } from '../../ui/slider'
 import { Collapse } from '../../ui/collapse'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select'
-import { ANIMATION_PRESETS } from '../../../store/slices/animationSlice'
+import { SPRING_PHYSICS_PRESETS } from '../../../lib/anim'
 import { SparklesIcon } from '../../ui/icons'
-
-const presetOptions = Object.keys(ANIMATION_PRESETS)
 
 export function AnimationSettingsPanel() {
   const { motionBlur, cursorAnimation, zoomAnimation, updateMotionBlur, updateCursorAnimation, updateZoomAnimation } =
@@ -125,14 +123,17 @@ export function AnimationSettingsPanel() {
           defaultOpen={true}
         >
           <div className="space-y-4">
-            <Select value={cursorAnimation.style} onValueChange={(style) => updateCursorAnimation({ style })}>
+            <Select
+              value={cursorAnimation.style}
+              onValueChange={(style) => updateCursorAnimation({ style: style as keyof typeof SPRING_PHYSICS_PRESETS })}
+            >
               <SelectTrigger className="h-10 bg-background/50">
                 <SelectValue placeholder="Select a preset" />
               </SelectTrigger>
               <SelectContent>
-                {presetOptions.map((opt) => (
-                  <SelectItem key={opt} value={opt} className="capitalize">
-                    {opt}
+                {Object.entries(SPRING_PHYSICS_PRESETS).map(([key, { name }]) => (
+                  <SelectItem key={key} value={key}>
+                    {name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -192,14 +193,17 @@ export function AnimationSettingsPanel() {
 
         <Collapse title="Zoom Animation" description="Style for zoom transitions" icon={<Route />} defaultOpen={true}>
           <div className="space-y-4">
-            <Select value={zoomAnimation.style} onValueChange={(style) => updateZoomAnimation({ style })}>
+            <Select
+              value={zoomAnimation.style}
+              onValueChange={(style) => updateZoomAnimation({ style: style as keyof typeof SPRING_PHYSICS_PRESETS })}
+            >
               <SelectTrigger className="h-10 bg-background/50">
                 <SelectValue placeholder="Select a preset" />
               </SelectTrigger>
               <SelectContent>
-                {presetOptions.map((opt) => (
-                  <SelectItem key={opt} value={opt} className="capitalize">
-                    {opt}
+                {Object.entries(SPRING_PHYSICS_PRESETS).map(([key, { name }]) => (
+                  <SelectItem key={key} value={key}>
+                    {name}
                   </SelectItem>
                 ))}
               </SelectContent>

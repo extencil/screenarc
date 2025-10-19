@@ -62,8 +62,6 @@ export const createTimelineSlice: Slice<TimelineState, TimelineActions> = (set, 
       startTime: currentTime,
       duration: ZOOM.DEFAULT_DURATION,
       zoomLevel: ZOOM.DEFAULT_LEVEL,
-      easing: ZOOM.DEFAULT_EASING,
-      transitionDuration: ZOOM.SPEED_OPTIONS[ZOOM.DEFAULT_SPEED as keyof typeof ZOOM.SPEED_OPTIONS],
       targetX: lastMousePos && recordingGeometry ? lastMousePos.x / recordingGeometry.width - 0.5 : 0,
       targetY: lastMousePos && recordingGeometry ? lastMousePos.y / recordingGeometry.height - 0.5 : 0,
       mode: 'auto',
@@ -163,11 +161,9 @@ export const createTimelineSlice: Slice<TimelineState, TimelineActions> = (set, 
     set((state) => {
       state.timelineZoom = zoom
     }),
-  applyAnimationSettingsToAll: ({ transitionDuration, easing, zoomLevel }) => {
+  applyAnimationSettingsToAll: ({ zoomLevel }) => {
     set((state) => {
       Object.values(state.zoomRegions).forEach((region) => {
-        region.transitionDuration = transitionDuration
-        region.easing = easing
         region.zoomLevel = zoomLevel
       })
     })
