@@ -168,7 +168,7 @@ export function CameraSettings() {
               title="Style"
               description="Change shape and orientation"
               icon={<Photo />}
-              defaultOpen={false}
+              defaultOpen={true}
               onReset={handleResetStyle}
             >
               <div className="space-y-6">
@@ -245,7 +245,7 @@ export function CameraSettings() {
             </Collapse>
 
             <Collapse
-              title="Placement"
+              title="Size & Position"
               description="Adjust size and corner position"
               icon={<TransformPointBottomLeftIcon />}
               defaultOpen={false}

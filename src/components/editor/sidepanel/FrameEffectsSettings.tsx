@@ -21,7 +21,7 @@ export function FrameEffectsSettings() {
     [frameStyles.shadowColor],
   )
 
-  const { hex: borderHex } = useMemo(() => rgbaToHexAlpha(frameStyles.borderColor), [frameStyles.borderColor])
+  // const { hex: borderHex } = useMemo(() => rgbaToHexAlpha(frameStyles.borderColor), [frameStyles.borderColor])
 
   const handleShadowColorChange = (newHex: string) => {
     const rgb = hexToRgb(newHex)
@@ -39,13 +39,13 @@ export function FrameEffectsSettings() {
     }
   }
 
-  const handleBorderColorChange = (newHex: string) => {
-    const rgb = hexToRgb(newHex)
-    if (rgb) {
-      const newRgbaColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`
-      updateFrameStyle({ borderColor: newRgbaColor })
-    }
-  }
+  // const handleBorderColorChange = (newHex: string) => {
+  //   const rgb = hexToRgb(newHex)
+  //   if (rgb) {
+  //     const newRgbaColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`
+  //     updateFrameStyle({ borderColor: newRgbaColor })
+  //   }
+  // }
 
   // --- Reset Handlers ---
   const handleResetPadding = () => {
@@ -192,7 +192,7 @@ export function FrameEffectsSettings() {
               onChange={(value) => handleStyleChange('borderRadius', value)}
             />
           </div>
-          <div className="space-y-2.5">
+          {/* <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Thickness</span>
               <span className="text-xs font-semibold text-primary tabular-nums">{frameStyles.borderWidth}px</span>
@@ -207,7 +207,7 @@ export function FrameEffectsSettings() {
           </div>
           <div>
             <ColorPicker label="Color" value={borderHex} onChange={handleBorderColorChange} />
-          </div>
+          </div> */}
         </div>
       </Collapse>
     </div>

@@ -71,7 +71,7 @@ export const DEFAULTS = {
       DEFAULT_COLOR_RGBA: 'rgba(0, 0, 0, 0.8)',
     },
     BORDER: {
-      WIDTH: { min: 0, max: 20, step: 1, defaultValue: 4 },
+      WIDTH: { min: 0, max: 20, step: 1, defaultValue: 0 }, // hidden border
       DEFAULT_COLOR_HEX: '#ffffff',
       DEFAULT_COLOR_RGBA: 'rgba(255, 255, 255, 0.2)',
     },
