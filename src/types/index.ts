@@ -123,14 +123,14 @@ export interface CursorImageBitmap extends CursorImageBase {
 
 export interface WebcamPosition {
   pos:
-    | 'top-left'
-    | 'top-center'
-    | 'top-right'
-    | 'bottom-left'
-    | 'bottom-center'
-    | 'bottom-right'
-    | 'left-center'
-    | 'right-center'
+  | 'top-left'
+  | 'top-center'
+  | 'top-right'
+  | 'bottom-left'
+  | 'bottom-center'
+  | 'bottom-right'
+  | 'left-center'
+  | 'right-center'
 }
 
 export type WebcamShape = 'circle' | 'square' | 'rectangle'
@@ -288,6 +288,33 @@ export interface AudioActions {
   setIsMuted: (isMuted: boolean) => void
 }
 
+export interface MotionBlurSettings {
+  enabled: boolean
+  amount: number
+  cursor: number
+  zoom: number
+  pan: number
+}
+
+export interface AnimationStyle {
+  style: string // preset name e.g., 'default', 'gentle'
+  mass: number
+  tension: number
+  friction: number
+}
+
+export interface AnimationState {
+  motionBlur: MotionBlurSettings
+  cursorAnimation: AnimationStyle
+  zoomAnimation: AnimationStyle
+}
+
+export interface AnimationActions {
+  updateMotionBlur: (settings: Partial<MotionBlurSettings>) => void
+  updateCursorAnimation: (settings: Partial<AnimationStyle>) => void
+  updateZoomAnimation: (settings: Partial<AnimationStyle>) => void
+}
+
 export type RenderableState = Pick<
   EditorState,
   | 'platform'
@@ -317,7 +344,8 @@ export type EditorState = ProjectState &
   PresetState &
   WebcamState &
   UIState &
-  AudioState
+  AudioState &
+  AnimationState
 
 // Combined actions type for the editor store
 export type EditorActions = ProjectActions &
@@ -327,7 +355,8 @@ export type EditorActions = ProjectActions &
   PresetActions &
   WebcamActions &
   UIActions &
-  AudioActions & {
+  AudioActions &
+  AnimationActions & {
     // Global reset action
     reset: () => void
   }

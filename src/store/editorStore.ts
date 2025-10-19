@@ -14,6 +14,7 @@ import { createPresetSlice, initialPresetState } from './slices/presetSlice'
 import { createWebcamSlice, initialWebcamState } from './slices/webcamSlice'
 import { createUISlice, initialUIState } from './slices/uiSlice'
 import { createAudioSlice, initialAudioState } from './slices/audioSlice'
+import { createAnimationSlice, initialAnimationState } from './slices/animationSlice'
 
 // Combine all actions into one type for the final store
 type EditorStore = EditorState & AllActions
@@ -30,6 +31,7 @@ export const useEditorStore = create(
       ...initialWebcamState,
       ...initialUIState,
       ...initialAudioState,
+      ...initialAnimationState,
 
       // Combine actions from all slices
       ...createProjectSlice(set, get),
@@ -40,6 +42,7 @@ export const useEditorStore = create(
       ...createWebcamSlice(set, get),
       ...createUISlice(set, get),
       ...createAudioSlice(set, get),
+      ...createAnimationSlice(set, get),
 
       // Global reset action
       reset: () =>
@@ -51,6 +54,7 @@ export const useEditorStore = create(
             initialFrameState,
             initialTimelineState,
             initialAudioState,
+            initialAnimationState,
           )
           // App-level state like presets and theme are not reset here
         }),
