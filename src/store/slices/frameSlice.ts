@@ -1,22 +1,23 @@
 import { WALLPAPERS } from '../../lib/constants'
 import type { FrameState, FrameActions, Slice } from '../../types'
 import type { AspectRatio, FrameStyles } from '../../types'
+import { DEFAULTS } from '../../lib/constants'
 
 export const initialFrameState: FrameState = {
   frameStyles: {
-    padding: 5,
+    padding: DEFAULTS.FRAME.PADDING.defaultValue,
     background: {
       type: 'wallpaper',
       thumbnailUrl: WALLPAPERS[0].thumbnailUrl,
       imageUrl: WALLPAPERS[0].imageUrl,
     },
-    borderRadius: 16,
-    shadowBlur: 35,
-    shadowOffsetX: 0,
-    shadowOffsetY: 15,
-    shadowColor: 'rgba(0, 0, 0, 0.8)',
-    borderWidth: 4,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: DEFAULTS.FRAME.RADIUS.defaultValue,
+    shadowBlur: DEFAULTS.FRAME.SHADOW.BLUR.defaultValue,
+    shadowOffsetX: DEFAULTS.FRAME.SHADOW.OFFSET_X.defaultValue,
+    shadowOffsetY: DEFAULTS.FRAME.SHADOW.OFFSET_Y.defaultValue,
+    shadowColor: DEFAULTS.FRAME.SHADOW.DEFAULT_COLOR_RGBA,
+    borderWidth: DEFAULTS.FRAME.BORDER.WIDTH.defaultValue,
+    borderColor: DEFAULTS.FRAME.BORDER.DEFAULT_COLOR_RGBA,
   },
   aspectRatio: '16:9' as AspectRatio,
 }

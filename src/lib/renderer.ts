@@ -245,13 +245,14 @@ export const drawScene = async (
   path.roundRect(0, 0, frameContentWidth, frameContentHeight, borderRadius)
   ctx.clip(path)
   ctx.drawImage(videoElement, 0, 0, frameContentWidth, frameContentHeight)
+  console.log('borderWidth', borderWidth)
 
   // Draw border on top of the video content
-  if (borderWidth > 0) {
-    ctx.strokeStyle = borderColor
-    ctx.lineWidth = borderWidth * 2
-    ctx.stroke(path)
-  }
+  // if (borderWidth > 0) {
+  //   ctx.strokeStyle = borderColor
+  //   ctx.lineWidth = borderWidth * 2
+  //   ctx.stroke(path)
+  // }
   ctx.restore()
 
   // --- 4. Draw Click Animations ---
