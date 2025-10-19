@@ -223,7 +223,7 @@ export const drawScene = async (
   ctx.translate(translateX, translateY)
   ctx.translate(-originPxX, -originPxY)
 
-  const { shadowBlur, shadowOffsetX, shadowOffsetY, borderRadius, shadowColor, borderWidth, borderColor } = frameStyles
+  const { shadowBlur, shadowOffsetX, shadowOffsetY, borderRadius, shadowColor } = frameStyles
 
   // Draw shadow if needed
   if (shadowBlur > 0) {
@@ -245,7 +245,6 @@ export const drawScene = async (
   path.roundRect(0, 0, frameContentWidth, frameContentHeight, borderRadius)
   ctx.clip(path)
   ctx.drawImage(videoElement, 0, 0, frameContentWidth, frameContentHeight)
-  console.log('borderWidth', borderWidth)
 
   // Draw border on top of the video content
   // if (borderWidth > 0) {

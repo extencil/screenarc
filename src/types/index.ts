@@ -307,13 +307,13 @@ export interface ZoomAnimationSettings extends SpringAnimationSettings {
 
 export interface AnimationState {
   motionBlur: MotionBlurSettings
-  cursorAnimation: SpringAnimationSettings // movement
+  cursorAnimation: ZoomAnimationSettings // movement
   zoomAnimation: ZoomAnimationSettings // screen zoom
 }
 
 export interface AnimationActions {
   updateMotionBlur: (settings: Partial<MotionBlurSettings>) => void
-  updateCursorAnimation: (settings: Partial<SpringAnimationSettings>) => void
+  updateCursorAnimation: (settings: Partial<ZoomAnimationSettings>) => void
   updateZoomAnimation: (settings: Partial<ZoomAnimationSettings>) => void
 }
 
