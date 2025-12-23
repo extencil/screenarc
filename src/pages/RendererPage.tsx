@@ -164,8 +164,9 @@ export function RendererPage() {
           })
 
         const loadPromises: Promise<void>[] = [loadVideo(video, 'Main video', projectStateWithCursorBitmaps.videoPath!)]
-        if (projectStateWithCursorBitmaps.webcamVideoPath && webcamVideo) {
-          loadPromises.push(loadVideo(webcamVideo, 'Webcam video', projectStateWithCursorBitmaps.webcamVideoPath))
+        const hasWebcam = Boolean(projectStateWithCursorBitmaps.webcamVideoPath && typeof projectStateWithCursorBitmaps.webcamVideoPath === 'string')
+        if (hasWebcam && webcamVideo) {
+          loadPromises.push(loadVideo(webcamVideo, 'Webcam video', projectStateWithCursorBitmaps.webcamVideoPath!))
         }
         await Promise.all(loadPromises)
 
@@ -204,11 +205,11 @@ export function RendererPage() {
 
           // Create seek promises for both videos
           const mainSeek = seekPromise(video)
-          const webcamSeek = webcamVideo ? seekPromise(webcamVideo) : Promise.resolve()
+          const webcamSeek = (hasWebcam && webcamVideo) ? seekPromise(webcamVideo) : Promise.resolve()
 
           // Set currentTime for both videos to trigger seeking
           video.currentTime = sourceTimestamp
-          if (webcamVideo) {
+          if (hasWebcam && webcamVideo) {
             webcamVideo.currentTime = sourceTimestamp
           }
 
