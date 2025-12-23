@@ -186,7 +186,14 @@ export function RendererPage() {
         // --- 5. SETUP SEEK-DRIVEN RENDER LOOP ---
         const seekPromise = (videoElement: HTMLVideoElement) => {
           return new Promise<void>((resolve) => {
+            const timeout = setTimeout(() => {
+              log.warn('[RendererPage] Seek operation timed out.')
+              videoElement.removeEventListener('seeked', onSeeked) // Clean up listener on timeout
+              resolve() // Resolve anyway to not block the loop
+            }, 1000) // 1 second timeout
+
             const onSeeked = () => {
+              clearTimeout(timeout)
               videoElement.removeEventListener('seeked', onSeeked)
               resolve()
             }
